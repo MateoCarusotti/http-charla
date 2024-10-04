@@ -5,15 +5,15 @@ app.secret_key = 'secret_key'
 
 # Usuarios simulados para prueba
 users = {'admin': 'password123', 
-         'magma': ['ocean', 'sacachispas'], 'cloud': ['flame','chicago'], 
-         'bird': ['leaf', 'Berazategui'], 'pine': ['spoon', 'Ituzaingo'], 
-         'moon': ['storm', 'Cambaceres'], 'star': ['sand', 'Yupanqui'] }
+         'magma': 'ocean', 'cloud': 'flame', 
+         'bird': 'leaf', 'pine': 'spoon', 
+         'moon': 'storm', 'star': 'sand' }
 
 @app.route('/')
 def home():
     if 'username' in session:
         username = session['username']
-        special_word = users[username][1]  # Segundo elemento del arreglo en el diccionario
+        special_word = "4to año del Liceo" 
         return render_template('home.html', username=username, special_word=special_word)
     return redirect(url_for('login'))
 
@@ -24,7 +24,7 @@ def login():
         username = request.form['username'].lower()
         password = request.form['password']
         
-        if username in users and users[username][0] == password:
+        if username in users and users[username] == password:
             session['username'] = username
             return redirect(url_for('home'))
         else:
