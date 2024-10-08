@@ -4,11 +4,15 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'secret_key'
 
-# Usuarios simulados para prueba
 users = {'admin': 'password123', 
-         'magma': 'ocean', 'cloud': 'flame', 
-         'bird': 'leaf', 'pine': 'spoon', 
-         'moon': 'storm', 'star': 'sand' }
+         'violet': 'oceans', 'clouds': 'sunset', 
+         'forest': 'jungle', 'secret': 'spoons', 
+         'silver': 'storms', 'flames': 'bright' }
+
+groups = {
+    'violet': 'Grupo 1', 'clouds': 'Grupo 2','forest': 'Grupo 3', 
+    'secret': 'Grupo 4', 'silver': 'Grupo 5', 'flames': 'Grupo 6'
+}
 
 
 def buscar_string_en_archivo(nombre_archivo, string_a_buscar):
@@ -19,6 +23,15 @@ def buscar_string_en_archivo(nombre_archivo, string_a_buscar):
             return True  
         else:
             return False  
+
+def leer_archivo_a_arreglo(nombre_archivo):
+    with open(nombre_archivo, 'r', encoding='UTF-8') as archivo:
+        lineas = archivo.readlines()
+    arreglo = []
+    for linea in lineas:
+        tiempo, usuario = linea.strip().split(' - ')
+        arreglo.append((tiempo, usuario))
+    return arreglo
 
 
 @app.route('/')
@@ -37,6 +50,8 @@ def login():
         
         if username in users and users[username] == password:
             session['username'] = username
+            if username == 'admin':
+                return redirect(url_for('admin_home')) 
             return redirect(url_for('home'))
         else:
             return render_template('login.html', message='Datos Invalidos')
@@ -49,7 +64,7 @@ def ingresar_dato():
         username = session['username']
         if not buscar_string_en_archivo('scoreboard.txt', username):
         
-            current_time = datetime.now()
+            current_time = datetime.now().strftime('%H:%M:%S')
 
             score.write(f"{current_time} - {username}\n")
 
@@ -58,6 +73,14 @@ def ingresar_dato():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
+    return redirect(url_for('login'))
+
+@app.route('/admin_home_home_home')
+def admin_home():
+    if 'username' in session:
+        username = session['username'] 
+        arreglo = leer_archivo_a_arreglo('scoreboard.txt')
+        return render_template('admin_home.html', arreglo=arreglo, groups=groups,username=username)
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
