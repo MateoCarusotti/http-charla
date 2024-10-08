@@ -24,9 +24,8 @@ def buscar_string_en_archivo(nombre_archivo, string_a_buscar):
 @app.route('/')
 def home():
     if 'username' in session:
-        username = session['username']
-        special_word = "4to año del Liceo" 
-        return render_template('home.html', username=username, special_word=special_word)
+        username = session['username'] 
+        return render_template('home.html', username=username)
     return redirect(url_for('login'))
 
 
@@ -34,7 +33,7 @@ def home():
 def login():
     if request.method == 'POST':
         username = request.form['username'].lower()
-        password = request.form['password']
+        password = request.form['password'].lower()
         
         if username in users and users[username] == password:
             session['username'] = username
@@ -54,7 +53,7 @@ def ingresar_dato():
 
             score.write(f"{current_time} - {username}\n")
 
-    return render_template('home.html', message= '¡Ya lo enviaste!')
+    return render_template('home.html', username=username, message= '¡Ya lo enviaste!')
 
 @app.route('/logout')
 def logout():
